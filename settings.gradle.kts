@@ -1,5 +1,5 @@
 // Nome do projeto raiz. Ajustado para refletir o nome do repositório.
-rootProject.name = "cyberia_ui_kmm"
+rootProject.name = "cyberia_ui_kmp"
 
 /*
  * Declaramos os módulos do projeto. Nesta fase do MVP focamos na

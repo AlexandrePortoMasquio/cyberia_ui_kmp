@@ -1,10 +1,10 @@
 # Interface KMM para Cyberia
 
-Este projeto é um esqueleto de interface Web em Kotlin Multiplatform (destino JS) para integrar com o contrato de escrow **Cyberia** na Solana. O nome do projeto no Gradle foi ajustado para `cyberia_ui_kmm` e pode ser modificado conforme necessário.
+Este projeto é um esqueleto de interface Web em Kotlin Multiplatform (destino JS) para integrar com o contrato de escrow **Cyberia** na Solana. O nome do projeto no Gradle foi ajustado para `cyberia_ui_kmp` e pode ser modificado conforme necessário.
 
 ## Conteúdo
 
-- `webApp` — módulo Kotlin/JS com a interface web e integração com Phantom/Solana.  
+- `webApp` — módulo Kotlin/JS com a interface web e integração com Phantom/Solana.
 - `shared` — módulo multiplataforma vazio, destinado a compartilhamento de lógica entre plataformas futuras (Android/iOS).
 
 ## Como rodar localmente
@@ -19,7 +19,7 @@ O servidor de desenvolvimento abrirá automaticamente a interface em seu navegad
 
 ## Inicializando um repositório Git
 
-Para versionar este projeto em um novo repositório chamado **cyberia_ui_kmm** no GitHub, siga os passos abaixo no terminal:
+Para versionar este projeto em um novo repositório chamado **cyberia_ui_kmp** no GitHub, siga os passos abaixo no terminal:
 
 ```bash
 cd cyberia_kmm_ui              # navegue até o diretório do projeto
@@ -31,7 +31,7 @@ git config user.email "seu@email"    # configure seu e-mail de autor
 git commit -m "Primeiro commit: estrutura KMM"
 
 # adicione o repositório remoto (ajuste a URL para o seu repositório)
-git remote add origin https://github.com/AlexandrePortoMasquio/cyberia_ui_kmm.git
+git remote add origin https://github.com/AlexandrePortoMasquio/cyberia_ui_kmp.git
 
 # envie sua branch para o GitHub
 git push -u origin develop
