@@ -4,7 +4,7 @@ Este projeto é um esqueleto de interface Web em Kotlin Multiplatform (destino J
 
 ## Conteúdo
 
-- `webApp` — módulo Kotlin/JS com a interface web e integração com Phantom/Solana.
+- `webApp` — módulo Kotlin/JS com a interface web e integração com Phantom/Solana.  
 - `shared` — módulo multiplataforma vazio, destinado a compartilhamento de lógica entre plataformas futuras (Android/iOS).
 
 ## Como rodar localmente

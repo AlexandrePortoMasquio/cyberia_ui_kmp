@@ -6,6 +6,7 @@ import solana.Connection
 import solana.PublicKey
 import js.PhantomProvider
 import js.window as jsWindow
+import org.w3c.dom.HTMLInputElement
 
 /**
  * Entrypoint do aplicativo Kotlin/JS. Este código inicializa
@@ -61,12 +62,15 @@ fun main() {
     }
 
     openEscrowBtn.onclick = {
-        el("actionStatus").textContent = "TODO: implementar abertura de escrow com IDL real"
+        // Captura valores dos campos de entrada (stub).
+        val price = (el("priceInput") as HTMLInputElement).value
+        val nonce = (el("nonceInput") as HTMLInputElement).value
+        el("actionStatus").textContent = "Abrindo escrow (stub): preço=" + price + ", nonce=" + nonce
     }
     confirmBtn.onclick = {
-        el("actionStatus").textContent = "TODO: implementar confirmação de entrega"
+        el("actionStatus").textContent = "Confirmando entrega (stub)"
     }
     refundBtn.onclick = {
-        el("actionStatus").textContent = "TODO: implementar refund após timeout"
+        el("actionStatus").textContent = "Solicitando refund (stub)"
     }
 }
