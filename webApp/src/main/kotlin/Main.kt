@@ -2,6 +2,7 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.promise
+import kotlinx.coroutines.await
 import solana.Connection
 import solana.PublicKey
 import js.PhantomProvider

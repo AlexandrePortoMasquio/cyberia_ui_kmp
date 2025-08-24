@@ -1,4 +1,9 @@
 import { defineConfig } from '@playwright/test';
+import fs from 'fs';
+
+const gradleCmd = process.platform === 'win32'
+  ? (fs.existsSync('gradlew.bat') ? '.\\gradlew.bat' : 'gradle')
+  : (fs.existsSync('./gradlew') ? './gradlew' : 'gradle');
 
 export default defineConfig({
   testDir: 'tests',
@@ -10,9 +15,7 @@ export default defineConfig({
     headless: true,
   },
   webServer: {
-    command: process.platform === 'win32'
-      ? '.\\gradlew.bat :webApp:browserDevelopmentRun'
-      : './gradlew :webApp:browserDevelopmentRun',
+    command: `${gradleCmd} :webApp:jsBrowserDevelopmentRun`,
     port: 8080,
     reuseExistingServer: !process.env.CI,
     env: {
@@ -23,4 +26,3 @@ export default defineConfig({
     },
   },
 });
-
