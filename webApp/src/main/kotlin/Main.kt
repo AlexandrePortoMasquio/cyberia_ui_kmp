@@ -9,10 +9,10 @@ import js.window as jsWindow
 import org.w3c.dom.HTMLInputElement
 
 /**
- * Entrypoint do aplicativo Kotlin/JS. Este código inicializa
- * a conexão com a carteira Phantom, consulta saldo e registra
- * handlers para botões de escrow. As funções de escrow ainda
- * estão stubs, pois dependem do IDL real do contrato.
+ * Kotlin/JS application entrypoint. This code initializes the
+ * connection with the Phantom wallet, fetches balance, and
+ * registers handlers for escrow buttons. Escrow functions are
+ * still stubs, as they depend on the real program IDL.
  */
 private val defaultEndpoint: String = js("(typeof process !== 'undefined' && process.env.SOLANA_RPC) || ''") as? String?
     ?: "https://api.devnet.solana.com"
@@ -20,7 +20,7 @@ private val defaultEndpoint: String = js("(typeof process !== 'undefined' && pro
 private fun el(id: String) = document.getElementById(id)!!
 
 fun main() {
-    // Exibir endpoint em algum lugar, se desejar.
+    // Display endpoint somewhere if desired.
     val connectBtn = el("connectBtn") as org.w3c.dom.HTMLButtonElement
     val balanceBtn = el("balanceBtn") as org.w3c.dom.HTMLButtonElement
     val openEscrowBtn = el("openEscrowBtn") as org.w3c.dom.HTMLButtonElement
@@ -34,7 +34,7 @@ fun main() {
         openEscrowBtn.disabled = true
         confirmBtn.disabled = true
         refundBtn.disabled = true
-        el("addr").textContent = "Phantom não detectada"
+        el("addr").textContent = "Phantom not detected"
         return
     }
 
@@ -62,15 +62,15 @@ fun main() {
     }
 
     openEscrowBtn.onclick = {
-        // Captura valores dos campos de entrada (stub).
+        // Capture values from input fields (stub).
         val price = (el("priceInput") as HTMLInputElement).value
         val nonce = (el("nonceInput") as HTMLInputElement).value
-        el("actionStatus").textContent = "Abrindo escrow (stub): preço=" + price + ", nonce=" + nonce
+        el("actionStatus").textContent = "Opening escrow (stub): price=" + price + ", nonce=" + nonce
     }
     confirmBtn.onclick = {
-        el("actionStatus").textContent = "Confirmando entrega (stub)"
+        el("actionStatus").textContent = "Confirming delivery (stub)"
     }
     refundBtn.onclick = {
-        el("actionStatus").textContent = "Solicitando refund (stub)"
+        el("actionStatus").textContent = "Requesting refund (stub)"
     }
 }

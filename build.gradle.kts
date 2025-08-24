@@ -1,4 +1,4 @@
-// build.gradle.kts na raiz define repositórios e versões comuns.
+// Root build.gradle.kts defines common repositories and versions.
 allprojects {
     repositories {
         mavenCentral()

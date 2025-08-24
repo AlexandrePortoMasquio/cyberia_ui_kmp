@@ -1,10 +1,10 @@
-// Nome do projeto raiz. Ajustado para refletir o nome do repositório.
+// Root project name. Adjusted to reflect the repository name.
 rootProject.name = "cyberia_ui_kmp"
 
 /*
- * Declaramos os módulos do projeto. Nesta fase do MVP focamos na
- * interface Web (webApp). O módulo shared está aqui para facilitar
- * a evolução futura para Android/iOS, mas pode ficar vazio por enquanto.
+ * Declare project modules. At this MVP stage we focus on the
+ * Web interface (webApp). The shared module is here to ease
+ * future expansion to Android/iOS and may remain empty for now.
  */
 include("webApp")
 include("shared")

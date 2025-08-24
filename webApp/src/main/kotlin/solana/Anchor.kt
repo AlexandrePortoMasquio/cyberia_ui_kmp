@@ -4,8 +4,8 @@
 package solana
 
 /**
- * Externs mínimos para Anchor no ambiente JS. Com estes bindings
- * é possível instanciar um Provider e um Program a partir de um IDL.
+ * Minimal externs for Anchor in the JS environment. With these bindings
+ * it is possible to instantiate a Provider and a Program from an IDL.
  */
 external object anchor {
     val web3: dynamic
@@ -14,7 +14,7 @@ external object anchor {
 }
 
 /**
- * Requer módulo dinâmico. Em alguns contextos do Kotlin/JS
- * convém usar require() para carregar módulos.
+ * Dynamic module require. In some Kotlin/JS contexts it is convenient
+ * to use require() to load modules.
  */
 external fun require(module: String): dynamic

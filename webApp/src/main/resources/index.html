@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,28 +17,28 @@
   <body>
     <div class="card">
       <h1>Cyberia Escrow (Kotlin Multiplatform)</h1>
-      <p>Interface web em Kotlin/JS para interagir com o contrato de escrow.</p>
+      <p>Kotlin/JS web interface to interact with the escrow contract.</p>
       <div class="row">
-        <button id="connectBtn">Conectar carteira</button>
-        <button id="balanceBtn" disabled>Consultar saldo</button>
+        <button id="connectBtn">Connect wallet</button>
+        <button id="balanceBtn" disabled>Get balance</button>
       </div>
       <div class="status">
-        Endereço: <span id="addr">—</span>
+        Address: <span id="addr">—</span>
       </div>
       <div class="status">
-        Saldo (lamports): <span id="balance">—</span>
+        Balance (lamports): <span id="balance">—</span>
       </div>
       <div class="section">
-        <h2>Ações de Escrow</h2>
+        <h2>Escrow Actions</h2>
         <div class="row">
-          <label for="priceInput">Preço (lamports):</label>
+          <label for="priceInput">Price (lamports):</label>
           <input id="priceInput" type="number" min="0" />
           <label for="nonceInput">Nonce:</label>
           <input id="nonceInput" type="number" min="0" />
         </div>
         <div class="row">
-          <button id="openEscrowBtn" disabled>Abrir escrow</button>
-          <button id="confirmBtn" disabled>Confirmar entrega</button>
+          <button id="openEscrowBtn" disabled>Open escrow</button>
+          <button id="confirmBtn" disabled>Confirm delivery</button>
           <button id="refundBtn" disabled>Refund (timeout)</button>
         </div>
         <div class="status" id="actionStatus"></div>

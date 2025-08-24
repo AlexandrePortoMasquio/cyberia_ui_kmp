@@ -15,20 +15,20 @@ kotlin {
     }
 }
 
-// Dependências para a interface Web.
+// Dependencies for the Web interface.
 dependencies {
-    // Runtime da biblioteca padrão Kotlin para JS
+    // Kotlin standard library for JS runtime
     implementation(kotlin("stdlib-js"))
-    // HTML DSL para construir elementos de forma declarativa (opcional)
+    // HTML DSL to build elements declaratively (optional)
     implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.8.1")
-    // Corrotinas para JS
+    // Coroutines for JS
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${rootProject.extra["coroutines.version"]}")
-    // Bibliotecas JavaScript importadas via NPM para Solana e Anchor
+    // JavaScript libraries imported via NPM for Solana and Anchor
     implementation(npm("@solana/web3.js", "^1.95.3"))
     implementation(npm("@coral-xyz/anchor", "^0.29.0"))
 }
 
-// Abre automaticamente o navegador ao rodar em modo de desenvolvimento
+// Automatically open the browser when running in development mode
 tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("browserDevelopmentRun") {
     devServer = devServer?.copy(open = true)
 }

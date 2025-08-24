@@ -3,15 +3,14 @@ plugins {
 }
 
 kotlin {
-    // Configurações básicas para multiplataforma comum. Por ora não há código,
-    // mas esta configuração permite criar src/commonMain para compartilhar
-    // lógica de negócios futuramente.
+// Basic configuration for common multiplatform. There is no code for now,
+// but this allows creating src/commonMain to share business logic later.
     jvm()
     js(IR) {
         nodejs()
         browser()
     }
-    // Android/iOS podem ser adicionados quando necessário.
+    // Android/iOS can be added when needed.
 }
 
 sourceSets {
