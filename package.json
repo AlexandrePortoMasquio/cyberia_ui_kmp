@@ -2,7 +2,8 @@
   "name": "cyberia-ui-kmp-e2e",
   "private": true,
   "devDependencies": {
-    "@playwright/test": "^1.47.1"
+    "@playwright/test": "^1.47.1",
+    "@types/node": "^24.3.0"
   },
   "scripts": {
     "test:e2e": "playwright test",
@@ -10,4 +11,3 @@
     "test:e2e:install": "playwright install"
   }
 }
-
