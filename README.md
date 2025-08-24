@@ -1,40 +1,40 @@
-# Interface KMM para Cyberia
+# KMM Interface for Cyberia
 
-Este projeto é um esqueleto de interface Web em Kotlin Multiplatform (destino JS) para integrar com o contrato de escrow **Cyberia** na Solana. O nome do projeto no Gradle foi ajustado para `cyberia_ui_kmp` e pode ser modificado conforme necessário.
+This project is a Kotlin Multiplatform (JS target) web interface skeleton to integrate with the Cyberia escrow contract on Solana. The Gradle project name is set to `cyberia_ui_kmp` and can be changed as needed.
 
-## Conteúdo
+## Contents
 
-- `webApp` — módulo Kotlin/JS com a interface web e integração com Phantom/Solana.  
-- `shared` — módulo multiplataforma vazio, destinado a compartilhamento de lógica entre plataformas futuras (Android/iOS).
+- `webApp` — Kotlin/JS module with the web UI and Phantom/Solana integration.
+- `shared` — empty multiplatform module, intended for sharing logic across future platforms (Android/iOS).
 
-## Como rodar localmente
+## Running Locally
 
-Requisitos: JDK 17+, Node 18+.
+Requirements: JDK 17+, Node 18+.
 
 ```bash
 ./gradlew :webApp:browserDevelopmentRun
 ```
 
-O servidor de desenvolvimento abrirá automaticamente a interface em seu navegador. A conexão RPC padrão aponta para a `Devnet`. Você pode trocar definindo a variável de ambiente `SOLANA_RPC` antes de rodar.
+The development server will automatically open the interface in your browser. The default RPC connection points to `Devnet`. You can change it by setting the `SOLANA_RPC` environment variable before running.
 
-## Inicializando um repositório Git
+## Initializing a Git Repository
 
-Para versionar este projeto em um novo repositório chamado **cyberia_ui_kmp** no GitHub, siga os passos abaixo no terminal:
+To version this project in a new repository named **cyberia_ui_kmp** on GitHub, follow the steps below in the terminal:
 
 ```bash
-cd cyberia_kmm_ui              # navegue até o diretório do projeto
-git init                      # inicializa um repositório git vazio
-git checkout -b develop       # cria a branch principal de desenvolvimento (opcional)
-git add .                     # adiciona todos os arquivos
-git config user.name "Seu Nome"      # configure seu nome de autor
-git config user.email "seu@email"    # configure seu e-mail de autor
-git commit -m "Primeiro commit: estrutura KMM"
+cd cyberia_ui_kmp             # navigate to the project directory
+git init                      # initialize an empty git repository
+git checkout -b develop       # create the main development branch (optional)
+git add .                     # add all files
+git config user.name "Your Name"       # set your author name
+git config user.email "your@email"     # set your author email
+git commit -m "First commit: KMM structure"
 
-# adicione o repositório remoto (ajuste a URL para o seu repositório)
+# add the remote repository (adjust the URL to your repo)
 git remote add origin https://github.com/AlexandrePortoMasquio/cyberia_ui_kmp.git
 
-# envie sua branch para o GitHub
+# push your branch to GitHub
 git push -u origin develop
 ```
 
-Depois de enviar o código, você pode criar branches de funcionalidade (`feature/...`) e abrir Pull Requests para a branch `develop`, conforme seu fluxo de trabalho.
+After pushing the code, you can create feature branches (`feature/...`) and open Pull Requests to the `develop` branch according to your workflow.
