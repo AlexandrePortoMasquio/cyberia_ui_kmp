@@ -30,5 +30,7 @@ dependencies {
 
 // Automatically open the browser when running in development mode
 tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("browserDevelopmentRun") {
-    devServer = devServer?.copy(open = true)
+    // In CI/web testing we don't want to auto-open the browser.
+    val openBrowser = (System.getenv("CI") ?: "false").lowercase() != "true"
+    devServer = devServer?.copy(open = openBrowser)
 }

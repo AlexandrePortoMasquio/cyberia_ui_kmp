@@ -15,33 +15,54 @@
     </style>
   </head>
   <body>
+    <script>
+      // Dev-only wallet mock: enable via ?mockWallet=1 when Phantom isn't installed.
+      (function () {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const mock = params.get('mockWallet') === '1';
+          if (mock && !(window.solana && window.solana.isPhantom)) {
+            const fakePk = { toBase58: () => 'FAKE111111111111111111111111111111111111111' };
+            window.solana = {
+              isPhantom: true,
+              publicKey: fakePk,
+              connect: async () => ({ publicKey: fakePk }),
+              disconnect: async () => undefined,
+              signTransaction: async (tx) => tx,
+              signAndSendTransaction: async () => ({ signature: 'MOCK_SIGNATURE' })
+            };
+            console.info('[mock-wallet] Phantom mock enabled');
+          }
+        } catch (e) { console.warn('[mock-wallet] failed to init', e); }
+      })();
+    </script>
     <div class="card">
       <h1>Cyberia Escrow (Kotlin Multiplatform)</h1>
       <p>Kotlin/JS web interface to interact with the escrow contract.</p>
       <div class="row">
-        <button id="connectBtn">Connect wallet</button>
-        <button id="balanceBtn" disabled>Get balance</button>
+        <button id="connectBtn" data-testid="connect">Connect wallet</button>
+        <button id="balanceBtn" data-testid="balance" disabled>Get balance</button>
       </div>
       <div class="status">
-        Address: <span id="addr">—</span>
+        Address: <span id="addr" data-testid="address">—</span>
       </div>
       <div class="status">
-        Balance (lamports): <span id="balance">—</span>
+        Balance (lamports): <span id="balance" data-testid="lamports">—</span>
       </div>
       <div class="section">
         <h2>Escrow Actions</h2>
         <div class="row">
           <label for="priceInput">Price (lamports):</label>
-          <input id="priceInput" type="number" min="0" />
+          <input id="priceInput" data-testid="price" type="number" min="0" />
           <label for="nonceInput">Nonce:</label>
-          <input id="nonceInput" type="number" min="0" />
+          <input id="nonceInput" data-testid="nonce" type="number" min="0" />
         </div>
         <div class="row">
-          <button id="openEscrowBtn" disabled>Open escrow</button>
-          <button id="confirmBtn" disabled>Confirm delivery</button>
-          <button id="refundBtn" disabled>Refund (timeout)</button>
+          <button id="openEscrowBtn" data-testid="open" disabled>Open escrow</button>
+          <button id="confirmBtn" data-testid="confirm" disabled>Confirm delivery</button>
+          <button id="refundBtn" data-testid="refund" disabled>Refund (timeout)</button>
         </div>
-        <div class="status" id="actionStatus"></div>
+        <div class="status" id="actionStatus" data-testid="status"></div>
       </div>
     </div>
     <script src="/webApp.js"></script>
