@@ -1,40 +1,79 @@
-# KMM Interface for Cyberia
+# Cyberia (XCYB) — Web UI (Kotlin Multiplatform)
 
-This project is a Kotlin Multiplatform (JS target) web interface skeleton to integrate with the Cyberia escrow contract on Solana. The Gradle project name is set to `cyberia_ui_kmp` and can be changed as needed.
+Public website and app for Cyberia’s token XCYB. It provides content pages (Whitepaper, Philosophy, Token, Roadmap, Legal) and a Chat interface for decentralized agents, with crypto payments via escrow (to be wired with the real Anchor IDL).
 
-## Contents
+## Features
 
-- `webApp` — Kotlin/JS module with the web UI and Phantom/Solana integration.
-- `shared` — empty multiplatform module, intended for sharing logic across future platforms (Android/iOS).
+- Single‑Page Application with hash‑based routing (Home, Whitepaper, Philosophy, Token, Chat, Roadmap, Legal).
+- Phantom wallet integration (connect, show address, get SOL balance). Dev‑only mock via `?mockWallet=1`.
+- Escrow UI stubs (open/confirm/refund) ready to wire to the Anchor program.
+- Playwright end‑to‑end tests and Gradle wrapper for reproducible builds.
 
-## Running Locally
+## Tech Stack
 
-Requirements: JDK 17+, Node 18+.
+- Kotlin 2.0.0 (Multiplatform, JS IR target)
+- Gradle Wrapper 8.7
+- Kotlin/JS + Webpack Dev Server
+- NPM: `@solana/web3.js`, `@coral-xyz/anchor`
+- Playwright (Chromium/Firefox/WebKit)
+- Phantom (wallet) or mock wallet for tests
+
+See ARCHITECTURE.md for detailed internals and REQUIREMENTS.md for product scope.
+
+## Project Structure
+
+- `webApp/`
+  - `src/main/resources/index.html` — HTML shell, header/nav, mock wallet injection
+  - `src/main/kotlin/Main.kt` — SPA entrypoint, router, Chat wiring
+  - `src/main/kotlin/js/Phantom.kt` — Phantom externs
+  - `src/main/kotlin/solana/{Web3,Anchor,Ed25519}.kt` — JS externs for Solana/Anchor
+  - `src/main/resources/idl/{config.json,cyberia.json}` — program config + IDL placeholder
+- `shared/` — multiplatform scaffold (currently empty)
+- `playwright.config.ts`, `tests/` — E2E configuration and smoke test
+- `REQUIREMENTS.md`, `ARCHITECTURE.md` — docs
+
+## Getting Started
+
+Prerequisites: JDK 17+, Node 18+. Phantom optional (for real wallet testing).
+
+Run dev server:
 
 ```bash
-./gradlew :webApp:browserDevelopmentRun
+./gradlew :webApp:jsBrowserDevelopmentRun
 ```
 
-The development server will automatically open the interface in your browser. The default RPC connection points to `Devnet`. You can change it by setting the `SOLANA_RPC` environment variable before running.
+Open `http://localhost:8080`. Navigate using the header links, e.g. `#/chat`.
 
-## Initializing a Git Repository
+Mock wallet: append `?mockWallet=1` if Phantom isn’t installed.
 
-To version this project in a new repository named **cyberia_ui_kmp** on GitHub, follow the steps below in the terminal:
+RPC endpoint: defaults to Devnet. Override with an env var before running:
 
 ```bash
-cd cyberia_ui_kmp             # navigate to the project directory
-git init                      # initialize an empty git repository
-git checkout -b develop       # create the main development branch (optional)
-git add .                     # add all files
-git config user.name "Your Name"       # set your author name
-git config user.email "your@email"     # set your author email
-git commit -m "First commit: KMM structure"
-
-# add the remote repository (adjust the URL to your repo)
-git remote add origin https://github.com/AlexandrePortoMasquio/cyberia_ui_kmp.git
-
-# push your branch to GitHub
-git push -u origin develop
+SOLANA_RPC=http://127.0.0.1:8899 ./gradlew :webApp:jsBrowserDevelopmentRun
 ```
 
-After pushing the code, you can create feature branches (`feature/...`) and open Pull Requests to the `develop` branch according to your workflow.
+## Configuration
+
+- `webApp/src/main/resources/idl/config.json`
+  - `programId`: Cyberia escrow program ID (required for real transactions)
+  - `mintXcyb`: SPL mint address for XCYB
+  - `timeoutSecs`: UI reference for refunds
+- `SOLANA_RPC`: overrides default Devnet RPC for local validator or custom endpoints
+
+## Testing (E2E)
+
+```bash
+npm install
+npx playwright install
+npx playwright test
+```
+
+Playwright auto‑starts the dev server on port 8080 and runs tests headlessly. Use `PWDEBUG=1 npx playwright test` for headed debugging.
+
+## Production Build
+
+```bash
+./gradlew :webApp:jsBrowserProductionWebpack
+```
+
+Artifacts are emitted under `webApp/build/distributions/` (static files suitable for hosting).
