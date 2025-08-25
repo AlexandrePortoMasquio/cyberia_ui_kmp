@@ -19,13 +19,14 @@ This file tracks what works today, what’s tested, and what’s next. It acts a
   - `npm install && npx playwright install && npx playwright test`
 
 ## In Progress / Next Up
-- Chat UI (mock streaming) with model selector and session reset.
-- Token (XCYB) page content: mint, supply, allocation, utilities, explorer links.
-- Escrow gating MVP (real on-chain flow once IDL and config are provided):
-  - Open escrow for access (packages/price/nonce), confirm delivery, refund on timeout.
-  - Display signatures and cluster-aware explorer links.
-- E2E expansion: content pages, chat streaming assertions, paywall logic, error states.
-- CI pipeline (GitHub Actions): Gradle + Playwright matrix (Chromium/Firefox/WebKit) with caching and artifacts.
+- Chat UI (mock streaming): model selector, session reset, rate-limit hinting.
+- Token (XCYB) page content: mint, supply, allocation, utilities, explorer links; optional XCYB balance display.
+- Escrow gating MVP: open/confirm/refund flows with real Anchor IDL + Phantom; signatures + explorer links.
+- Security hardening: sanitize rendered markdown (e.g., DOMPurify) before inserting HTML.
+- Config consolidation: centralize `SOLANA_RPC`, `AGENTS_API_BASE`, pricing packages; document in README.
+- Accessibility/SEO: roles/labels, keyboard nav, meta tags, sitemap/robots (for static deploy).
+- E2E expansion: content rendering, chat streaming assertions, paywall logic, error states; device emulation.
+- CI pipeline (GitHub Actions): Gradle + Playwright across Chromium/Firefox/WebKit with caching and trace artifacts.
 
 ## Inputs Needed
 - Anchor program ID (`programId`), XCYB mint (`mintXcyb`), and `timeoutSecs` in `idl/config.json`.
@@ -48,4 +49,3 @@ This file tracks what works today, what’s tested, and what’s next. It acts a
 - Language: English only (code, UI, docs).
 - Commit messages: Conventional Commits (e.g., `feat:`, `fix:`, `docs:`, `chore:`).
 - Branching: feature branches `feature/...` → PRs into `release/v1.0` (or mainline branch per workflow).
-

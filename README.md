@@ -18,7 +18,7 @@ Public website and app for Cyberia’s token XCYB. It provides content pages (Wh
 - Playwright (Chromium/Firefox/WebKit)
 - Phantom (wallet) or mock wallet for tests
 
-See ARCHITECTURE.md for detailed internals and REQUIREMENTS.md for product scope.
+See ARCHITECTURE.md for detailed internals, REQUIREMENTS.md for product scope, and CONTRIBUTING.md for conventions (English-only policy, workflow).
 
 ## Project Structure
 
