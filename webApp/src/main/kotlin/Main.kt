@@ -10,6 +10,9 @@ import solana.PublicKey
 import js.PhantomProvider
 import js.window as jsWindow
 import markdown.marked
+import markdown.DOMPurify
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 /**
  * Kotlin/JS SPA entrypoint. Provides navigation between content pages
@@ -88,8 +91,9 @@ private fun renderMarkdownPage(path: String, title: String) {
         try {
             val resp = window.fetch(path).await()
             val text = resp.text().await()
-            val html = marked.parse(text)
-            root.innerHTML = "<h2>${title}</h2>" + html
+            val rawHtml = marked.parse(text)
+            val cleanHtml = DOMPurify.sanitize(rawHtml)
+            root.innerHTML = "<h2>${title}</h2>" + cleanHtml
         } catch (e: dynamic) {
             root.innerHTML = "<h2>${title}</h2><p>Failed to load content.</p>"
         }
@@ -100,6 +104,22 @@ private fun renderChat() {
     appRoot().innerHTML = """
       <h2>Chat Access</h2>
       <p>Connect your wallet and check your balance. Escrow actions are stubs until the IDL is wired.</p>
+      <div class="section">
+        <h3>Chat</h3>
+        <div class="row" style="align-items: center; gap: 0.75rem;">
+          <label for="modelSelect">Model:</label>
+          <select id="modelSelect">
+            <option value="cyberia-small">cyberia-small</option>
+            <option value="cyberia-general" selected>cyberia-general</option>
+          </select>
+          <button id="newChatBtn">New chat</button>
+        </div>
+        <div id="messages" style="min-height: 160px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 8px; margin: 0.75rem 0;"></div>
+        <div class="row" style="gap: 0.5rem;">
+          <textarea id="chatInput" rows="3" style="flex: 1; width: 100%;"></textarea>
+          <button id="sendBtn">Send</button>
+        </div>
+      </div>
       <div class="row">
         <button id="connectBtn" data-testid="connect">Connect wallet</button>
         <button id="balanceBtn" data-testid="balance" disabled>Get balance</button>
@@ -132,6 +152,11 @@ private fun renderChat() {
     val openEscrowBtn = el("openEscrowBtn") as org.w3c.dom.HTMLButtonElement
     val confirmBtn = el("confirmBtn") as org.w3c.dom.HTMLButtonElement
     val refundBtn = el("refundBtn") as org.w3c.dom.HTMLButtonElement
+    val sendBtn = el("sendBtn") as org.w3c.dom.HTMLButtonElement
+    val newChatBtn = el("newChatBtn") as org.w3c.dom.HTMLButtonElement
+    val chatInput = el("chatInput") as org.w3c.dom.HTMLTextAreaElement
+    val messages = el("messages") as org.w3c.dom.HTMLElement
+    val modelSelect = el("modelSelect") as org.w3c.dom.HTMLSelectElement
 
     val provider = jsWindow.asDynamic().solana as? PhantomProvider
     if (provider == null || provider.isPhantom != true) {
@@ -163,6 +188,63 @@ private fun renderChat() {
             val conn = Connection(defaultEndpoint)
             val bal = conn.getBalance(PublicKey(addr)).await().toLong()
             el("balance").textContent = bal.toString()
+        }
+        null
+    }
+
+    fun appendMessage(role: String, text: String) {
+        val safe = DOMPurify.sanitize(text)
+        messages.innerHTML += """
+            <div class="msg" data-role="$role" style="margin: 0.25rem 0;">
+              <strong>${role}:</strong> <span>${safe}</span>
+            </div>
+        """.trimIndent()
+        messages.scrollTop = messages.scrollHeight.toDouble()
+    }
+
+    fun clearChat() {
+        messages.innerHTML = ""
+        chatInput.value = ""
+    }
+
+    newChatBtn.onclick = {
+        clearChat(); null
+    }
+
+    fun startMockStream(model: String, prompt: String) {
+        appendMessage("user", prompt)
+        val reply = when (model) {
+            "cyberia-small" -> "Hello from $model. This is a concise mock reply."
+            else -> "Greetings from $model. This is a longer mock response streamed token by token to simulate latency and partial output."
+        }
+        GlobalScope.launch {
+            appendMessage("assistant", "")
+            // Append to the last assistant span incrementally
+            val last = messages.lastElementChild?.getElementsByTagName("span")?.item(0) as? org.w3c.dom.HTMLElement
+            var i = 0
+            while (i < reply.length) {
+                val chunk = reply.substring(i, kotlin.math.min(i + 4, reply.length))
+                last?.let { it.innerHTML = (it.innerHTML ?: "") + DOMPurify.sanitize(chunk) }
+                i += 4
+                delay(60)
+            }
+        }
+    }
+
+    fun sendCurrent() {
+        val msg = chatInput.value.trim()
+        if (msg.isEmpty()) return
+        val model = modelSelect.value
+        chatInput.value = ""
+        startMockStream(model, msg)
+    }
+
+    sendBtn.onclick = { sendCurrent(); null }
+    chatInput.onkeydown = {
+        val ev = it as org.w3c.dom.events.KeyboardEvent
+        if (ev.key == "Enter" && !ev.shiftKey) {
+            ev.preventDefault()
+            sendCurrent()
         }
         null
     }

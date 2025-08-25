@@ -23,6 +23,7 @@ kotlin {
                 implementation(npm("@solana/web3.js", "^1.95.3"))
                 implementation(npm("@coral-xyz/anchor", "^0.29.0"))
                 implementation(npm("marked", "^12.0.1"))
+                implementation(npm("dompurify", "^3.1.6"))
             }
         }
     }
