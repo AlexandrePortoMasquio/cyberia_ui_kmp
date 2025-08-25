@@ -22,6 +22,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${providers.gradleProperty("coroutines.version").get()}")
                 implementation(npm("@solana/web3.js", "^1.95.3"))
                 implementation(npm("@coral-xyz/anchor", "^0.29.0"))
+                implementation(npm("marked", "^12.0.1"))
             }
         }
     }

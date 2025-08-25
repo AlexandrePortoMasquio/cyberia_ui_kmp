@@ -36,35 +36,22 @@
         } catch (e) { console.warn('[mock-wallet] failed to init', e); }
       })();
     </script>
-    <div class="card">
-      <h1>Cyberia Escrow (Kotlin Multiplatform)</h1>
-      <p>Kotlin/JS web interface to interact with the escrow contract.</p>
-      <div class="row">
-        <button id="connectBtn" data-testid="connect">Connect wallet</button>
-        <button id="balanceBtn" data-testid="balance" disabled>Get balance</button>
-      </div>
-      <div class="status">
-        Address: <span id="addr" data-testid="address">—</span>
-      </div>
-      <div class="status">
-        Balance (lamports): <span id="balance" data-testid="lamports">—</span>
-      </div>
-      <div class="section">
-        <h2>Escrow Actions</h2>
-        <div class="row">
-          <label for="priceInput">Price (lamports):</label>
-          <input id="priceInput" data-testid="price" type="number" min="0" />
-          <label for="nonceInput">Nonce:</label>
-          <input id="nonceInput" data-testid="nonce" type="number" min="0" />
-        </div>
-        <div class="row">
-          <button id="openEscrowBtn" data-testid="open" disabled>Open escrow</button>
-          <button id="confirmBtn" data-testid="confirm" disabled>Confirm delivery</button>
-          <button id="refundBtn" data-testid="refund" disabled>Refund (timeout)</button>
-        </div>
-        <div class="status" id="actionStatus" data-testid="status"></div>
-      </div>
-    </div>
+    <header class="card" style="margin-bottom: 1rem;">
+      <h1>Cyberia (XCYB)</h1>
+      <nav class="row">
+        <a href="#/home">Home</a>
+        <a href="#/whitepaper">Whitepaper</a>
+        <a href="#/philosophy">Philosophy</a>
+        <a href="#/token">Token (XCYB)</a>
+        <a href="#/chat">Chat</a>
+        <a href="#/roadmap">Roadmap</a>
+        <a href="#/legal">Legal</a>
+      </nav>
+    </header>
+
+    <main id="app" class="card">
+      <!-- Content rendered by Kotlin router -->
+    </main>
     <script src="/webApp.js"></script>
   </body>
 </html>
