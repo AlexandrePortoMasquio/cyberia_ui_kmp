@@ -1,121 +1,132 @@
-# Cyberia UI KMP — Requirements
+# Cyberia (XCYB) — Website Requirements
 
-This document defines the requirements for the Cyberia web UI built with Kotlin Multiplatform (JS target). It is a living document and should be updated as the backend program, scope, or priorities change.
+This document defines the product and technical requirements for the Cyberia website, built with Kotlin Multiplatform (JS target). It is a living document and should be updated as the scope evolves.
 
-## 1. Overview
-- Purpose: Provide a simple, reliable web interface to interact with the Cyberia escrow program on Solana.
-- Scope (UI only): Wallet connection, showing balance, and executing escrow actions (open, confirm, refund) against the on-chain program via Anchor.
-- Out of scope (for now): Complex dashboards, advanced analytics, multi-wallet adapters, mobile native apps.
+## 1. Product Overview
+- Purpose: Public website for the Cyberia crypto project (token: XCYB), combining:
+  - Content: Whitepaper, philosophy/vision, token details (economics, mint, supply), roadmap, and legal disclaimers.
+  - App: A web interface to interact with decentralized chatbots (ChatGPT/DeepSeek-like UX) gated by crypto payments via escrow in XCYB (and SOL for fees).
+- Audience: Visitors researching Cyberia, and users paying to access decentralized chatbots.
 
 ## 2. Goals and Non‑Goals
 - Goals:
-  - Connect Phantom and display the connected public key.
-  - Fetch and display SOL balance (lamports).
-  - Execute escrow flows using the Anchor IDL for the Cyberia program:
-    - Open escrow (inputs: price in lamports, nonce).
-    - Confirm delivery (release funds to seller).
-    - Refund on timeout (reclaim funds to buyer after configured timeout).
-  - Provide clear status and error messages for each action.
-- Non‑Goals:
-  - Supporting non-Phantom wallets.
-  - Token swaps, bridging, or unrelated on-chain operations.
+  - Content site in English: clear navigation for Whitepaper, Philosophy, Token, Roadmap.
+  - Chat interface with near real-time streaming responses (typewriter effect) and conversation history in-session.
+  - Wallet connection (Phantom) and account display; SOL balance check.
+  - Payment gating via escrow using XCYB (SPL token) and Anchor IDL:
+    - Purchase chat access (credits/time/session) using escrowed XCYB.
+    - Release/settle payment after successful session; refund on timeout/invalid service.
+  - Clear error/status messaging throughout.
+- Non‑Goals (initial phases):
+  - Multi-wallet adapters beyond Phantom.
+  - Native mobile apps; complex user accounts with email/password.
+  - On-chain moderation, long-term cloud storage of chat logs.
 
-## 3. Personas & Environments
-- Personas:
-  - Buyer: opens escrows and may request refund after timeout.
-  - Seller: receives funds upon confirmation.
-  - Developer/QA: runs the app locally with mock wallet and E2E tests.
-- Environments:
-  - Local: `solana-test-validator` (preferred for development & tests).
-  - Devnet: default public test cluster.
-  - Mainnet: future; requires careful program and mint configuration.
+## 3. Information Architecture (IA)
+- Top-level navigation:
+  - Home (hero + quick links to Whitepaper/Philosophy/Chat)
+  - Whitepaper (rendered markdown/pdf)
+  - Philosophy (static content page)
+  - Token (XCYB): mint address, supply, distribution, utilities, contract links
+  - Chat (app): chat UI + payment gating
+  - Roadmap
+  - Legal (disclaimer, privacy)
+- Footer: socials, GitHub, program IDs, contact.
 
-## 4. Functional Requirements
-4.1 Wallet Connection
-- Detect Phantom via `window.solana`.
-- If present: allow “Connect wallet”; on success, show address and enable actions.
-- If absent: show “Phantom not detected”. Dev-only mock may be enabled via `?mockWallet=1`.
+## 4. Chat App — Functional Requirements
+4.1 Chat UX
+- Input box with send; Shift+Enter for newline.
+- Streaming assistant responses; display tokens/latency indicators.
+- Message roles: user, assistant, system (system optional/preprompt).
+- Model/agent selector (list of decentralized chatbot nodes) — basic dropdown.
+- New chat button (resets context); session-local history only for MVP.
 
-4.2 Balance
-- Fetch SOL balance in lamports for the connected address via `@solana/web3.js`.
-- Display the numeric lamports value; errors must surface to the user.
+4.2 Access Control and Payments
+- Access modes (configurable):
+  - Free tier (rate-limited, e.g., N messages/day) OR
+  - Paid: escrow XCYB to unlock a session/credit package.
+- Show current access state (e.g., “Free tier: 3/10 today” or “Credits: 120 left”).
 
-4.3 Open Escrow
-- Inputs: `price` (lamports, unsigned integer), `nonce` (unsigned integer).
-- Build and submit the transaction using Anchor `Program` and Phantom signing.
-- On success: show transaction signature and a success message.
-- On failure: show error reason and keep inputs intact for retry.
+4.3 Escrow (XCYB) for Access
+- Inputs: package selection (e.g., N messages or minutes), price in XCYB, nonce.
+- Create escrow using Anchor Program + Phantom signing.
+- On session completion/threshold reached: settle payment (confirm delivery).
+- On failure/timeout: allow refund according to `timeoutSecs`.
+- Display transaction signatures; link to explorer (cluster-aware).
 
-4.4 Confirm Delivery
-- Submit confirmation to release funds to the seller.
-- Show signature on success; show error details on failure.
+4.4 Backend Integration (Agents)
+- Configure an API base URL (e.g., gateway to decentralized nodes).
+- Endpoints:
+  - List models/agents (GET).
+  - Chat completion/stream (POST, server-sent events or chunked).
+  - Auth: signed message or wallet signature for session identification (optional; see 6.3).
+- Provide dev mocks for E2E tests to simulate agent responses.
 
-4.5 Refund (Timeout)
-- Submit refund if the escrow is refundable (program enforces timeout).
-- Show signature on success; show error details on failure.
+## 5. Content — Functional Requirements
+- Whitepaper: render from markdown/pdf stored in the repo or linked externally.
+- Philosophy, Token, Roadmap, Legal: static pages (markdown → HTML or static HTML).
+- Token page must show: mint address, supply, distribution/allocation, explorer links, and basic utility description.
 
-4.6 Input Validation
-- Price and nonce must be non-negative integers; empty values disable related actions.
-- Buttons enable/disable reflect connection state and input validity.
+## 6. Wallet, Auth, and Config
+6.1 Wallet
+- Detect Phantom via `window.solana`; connect/disconnect; show public key.
+- Show SOL balance (lamports) and optionally XCYB balance (future enhancement).
+- Dev-only mock wallet via `?mockWallet=1` for tests and demos.
 
-## 5. State & Accounts (Program Side)
-- Anchor Program IDL: stored under `webApp/src/main/resources/idl/cyberia.json`.
-- Program ID: set in `webApp/src/main/resources/idl/config.json` (`programId`).
-- Token Mint (if used): `mintXcyb` in `config.json`.
-- PDAs and account schemas are defined by the real IDL and must be used to construct instructions.
+6.2 Program/IDL
+- Anchor Program IDL: `webApp/src/main/resources/idl/cyberia.json` (must be populated).
+- Config: `webApp/src/main/resources/idl/config.json` with `programId`, `mintXcyb`, `timeoutSecs`.
 
-## 6. Configuration
-- `SOLANA_RPC`: environment variable to override RPC endpoint (default: Devnet).
-- `idl/config.json` fields:
-  - `programId`: string (required for real transactions).
-  - `mintXcyb`: string (required if the program uses this mint).
-  - `timeoutSecs`: number (UI reference for messaging; actual logic enforced on-chain).
+6.3 Session/Auth (Optional)
+- Option A: Stateless — include wallet public key and ephemeral signed nonce on chat calls.
+- Option B: Minimal session — server issues nonce; client signs; token used for subsequent chat requests during the session.
 
-## 7. UX / UI Requirements
-- Language: English only.
-- Page shows:
-  - Connect wallet and Get balance buttons.
-  - Address and balance readouts.
-  - Escrow section with inputs (price, nonce) and action buttons (open, confirm, refund).
-- Status area shows last action result (success/tx signature or error message).
-- Responsive layout: usable on common mobile viewport widths via browser dev tools.
+## 7. Input Validation & UX States
+- Disable actions until wallet is connected and inputs are valid.
+- Validate escrow inputs: price/nonce as non-negative integers; package selection required.
+- Show inline validation messages; preserve user input on errors.
 
 ## 8. Error Handling & Messaging
-- Missing Phantom: disable actions and show “Phantom not detected”.
-- RPC errors: show a concise message and encourage retry.
-- Validation errors: keep user inputs; explain what is invalid.
-- Transaction lifecycle: show signature and a short hint to view in explorer (cluster-aware link optional).
+- Wallet not detected: disable gated features and show guidance.
+- RPC/transaction failures: surface concise messages with retry hints.
+- Agent/API errors: show readable error text (e.g., “agent unavailable”) and suggest retry or alternate model.
 
-## 9. Security Considerations
-- All transactions require explicit wallet confirmation (Phantom prompt).
-- Do not store secrets locally; no private keys handled in the UI.
-- Use recent blockhash and correct fee payer; rely on Anchor where applicable.
-- Avoid injecting untrusted content into the DOM; keep status messages sanitized.
+## 9. Security & Privacy
+- All on-chain actions require wallet confirmation; never handle private keys.
+- Do not log chat content to third parties by default; provide clear privacy disclaimer if stored.
+- Sanitize user-rendered content; prevent XSS.
+- Use recent blockhash and correct fee payer; rely on Anchor best practices.
 
 ## 10. Non‑Functional Requirements
-- Compatibility: Latest Chrome, Firefox, and WebKit (via Playwright).
-- Performance: First load within typical dev server expectations; actions respond within RPC latency bounds.
-- Reliability: Handle offline/timeout gracefully with clear retry guidance.
+- Language: English only.
+- Performance: responsive UI and smooth streaming; acceptable TTI on dev server.
+- Compatibility: Latest Chrome/Firefox/WebKit; responsive layout for mobile.
+- Accessibility: basic keyboard navigation and ARIA roles for chat and buttons.
+- SEO: metadata for Home/Whitepaper/Token; clean URLs if routing is added.
 
-## 11. Test Strategy
-- Manual:
-  - Local dev server: `./gradlew :webApp:jsBrowserDevelopmentRun`.
-  - Mock wallet: `/?mockWallet=1` (no Phantom required).
+## 11. Configuration
+- `SOLANA_RPC`: override RPC endpoint (Devnet by default during development).
+- `AGENTS_API_BASE`: base URL to decentralized chatbot gateway (env or config file).
+- Feature flags: FREE_TIER_ENABLED, DEFAULT_MODEL, PRICING_PACKAGES.
+
+## 12. Test Strategy
+- Unit: utility functions (formatting, config parsing) when added.
 - E2E (Playwright):
-  - `npm install && npx playwright install && npx playwright test`.
-  - Smoke tests cover connect, balance, and escrow stub messaging.
-  - Extend to real transactions once IDL and accounts are wired.
-- Local validator:
-  - `solana-test-validator` + `SOLANA_RPC=http://127.0.0.1:8899` for deterministic testing.
+  - Content pages render (Home/Whitepaper/Philosophy/Token/Roadmap).
+  - Wallet connect mock flow; balance display.
+  - Chat flow with mocked agent streaming.
+  - Escrow flow with mocked on-chain client (until real IDL is wired).
+- Local validator: `solana-test-validator` + `SOLANA_RPC=http://127.0.0.1:8899` for on-chain tests.
 
-## 12. Open Questions
-- Final program ID and IDL for Cyberia escrow.
-- Whether escrow uses SOL or SPL tokens (and which mint/accounts).
-- Exact instruction parameters and PDA derivations for open/confirm/refund.
-- Desired UX around transaction confirmation links and toasts.
+## 13. Open Questions
+- Final program ID and full Anchor IDL for escrow.
+- Exact pricing model (per message, per minute, or credit bundles) and amounts in XCYB.
+- Whether XCYB or SOL covers fees beyond program interactions.
+- Session persistence (local-only vs. optional server-side storage/login).
+- Exact list and discovery of decentralized chatbot nodes.
 
-## 13. Glossary
+## 14. Glossary
+- XCYB: Cyberia SPL token used for payments.
+- Escrow: On-chain mechanism to hold funds during service delivery.
 - Lamports: Smallest unit of SOL (1 SOL = 1,000,000,000 lamports).
-- Anchor: Framework for Solana programs with IDL-driven clients.
-- IDL: Interface Definition Language describing program instructions and accounts.
-
+- Anchor/IDL: Solana framework and program schema for clients.
