@@ -31,6 +31,7 @@ See ARCHITECTURE.md for detailed internals and REQUIREMENTS.md for product scope
 - `shared/` — multiplatform scaffold (currently empty)
 - `playwright.config.ts`, `tests/` — E2E configuration and smoke test
 - `REQUIREMENTS.md`, `ARCHITECTURE.md` — docs
+ - `DEVELOPMENT_STATUS.md` — what works, tests, and next steps
 
 ## Getting Started
 
