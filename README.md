@@ -1,40 +1,80 @@
-# Interface KMM para Cyberia
+# Cyberia (XCYB) — Web UI (Kotlin Multiplatform)
 
-Este projeto é um esqueleto de interface Web em Kotlin Multiplatform (destino JS) para integrar com o contrato de escrow **Cyberia** na Solana. O nome do projeto no Gradle foi ajustado para `cyberia_ui_kmp` e pode ser modificado conforme necessário.
+Public website and app for Cyberia’s token XCYB. It provides content pages (Whitepaper, Philosophy, Token, Roadmap, Legal) and a Chat interface for decentralized agents, with crypto payments via escrow (to be wired with the real Anchor IDL).
 
-## Conteúdo
+## Features
 
-- `webApp` — módulo Kotlin/JS com a interface web e integração com Phantom/Solana.  
-- `shared` — módulo multiplataforma vazio, destinado a compartilhamento de lógica entre plataformas futuras (Android/iOS).
+- Single‑Page Application with hash‑based routing (Home, Whitepaper, Philosophy, Token, Chat, Roadmap, Legal).
+- Phantom wallet integration (connect, show address, get SOL balance). Dev‑only mock via `?mockWallet=1`.
+- Escrow UI stubs (open/confirm/refund) ready to wire to the Anchor program.
+- Playwright end‑to‑end tests and Gradle wrapper for reproducible builds.
 
-## Como rodar localmente
+## Tech Stack
 
-Requisitos: JDK 17+, Node 18+.
+- Kotlin 2.0.0 (Multiplatform, JS IR target)
+- Gradle Wrapper 8.7
+- Kotlin/JS + Webpack Dev Server
+- NPM: `@solana/web3.js`, `@coral-xyz/anchor`
+- Playwright (Chromium/Firefox/WebKit)
+- Phantom (wallet) or mock wallet for tests
+
+See ARCHITECTURE.md for detailed internals, REQUIREMENTS.md for product scope, and CONTRIBUTING.md for conventions (English-only policy, workflow).
+
+## Project Structure
+
+- `webApp/`
+  - `src/main/resources/index.html` — HTML shell, header/nav, mock wallet injection
+  - `src/main/kotlin/Main.kt` — SPA entrypoint, router, Chat wiring
+  - `src/main/kotlin/js/Phantom.kt` — Phantom externs
+  - `src/main/kotlin/solana/{Web3,Anchor,Ed25519}.kt` — JS externs for Solana/Anchor
+  - `src/main/resources/idl/{config.json,cyberia.json}` — program config + IDL placeholder
+- `shared/` — multiplatform scaffold (currently empty)
+- `playwright.config.ts`, `tests/` — E2E configuration and smoke test
+- `REQUIREMENTS.md`, `ARCHITECTURE.md` — docs
+ - `DEVELOPMENT_STATUS.md` — what works, tests, and next steps
+
+## Getting Started
+
+Prerequisites: JDK 17+, Node 18+. Phantom optional (for real wallet testing).
+
+Run dev server:
 
 ```bash
-./gradlew :webApp:browserDevelopmentRun
+./gradlew :webApp:jsBrowserDevelopmentRun
 ```
 
-O servidor de desenvolvimento abrirá automaticamente a interface em seu navegador. A conexão RPC padrão aponta para a `Devnet`. Você pode trocar definindo a variável de ambiente `SOLANA_RPC` antes de rodar.
+Open `http://localhost:8080`. Navigate using the header links, e.g. `#/chat`.
 
-## Inicializando um repositório Git
+Mock wallet: append `?mockWallet=1` if Phantom isn’t installed.
 
-Para versionar este projeto em um novo repositório chamado **cyberia_ui_kmp** no GitHub, siga os passos abaixo no terminal:
+RPC endpoint: defaults to Devnet. Override with an env var before running:
 
 ```bash
-cd cyberia_kmm_ui              # navegue até o diretório do projeto
-git init                      # inicializa um repositório git vazio
-git checkout -b develop       # cria a branch principal de desenvolvimento (opcional)
-git add .                     # adiciona todos os arquivos
-git config user.name "Seu Nome"      # configure seu nome de autor
-git config user.email "seu@email"    # configure seu e-mail de autor
-git commit -m "Primeiro commit: estrutura KMM"
-
-# adicione o repositório remoto (ajuste a URL para o seu repositório)
-git remote add origin https://github.com/AlexandrePortoMasquio/cyberia_ui_kmp.git
-
-# envie sua branch para o GitHub
-git push -u origin develop
+SOLANA_RPC=http://127.0.0.1:8899 ./gradlew :webApp:jsBrowserDevelopmentRun
 ```
 
-Depois de enviar o código, você pode criar branches de funcionalidade (`feature/...`) e abrir Pull Requests para a branch `develop`, conforme seu fluxo de trabalho.
+## Configuration
+
+- `webApp/src/main/resources/idl/config.json`
+  - `programId`: Cyberia escrow program ID (required for real transactions)
+  - `mintXcyb`: SPL mint address for XCYB
+  - `timeoutSecs`: UI reference for refunds
+- `SOLANA_RPC`: overrides default Devnet RPC for local validator or custom endpoints
+
+## Testing (E2E)
+
+```bash
+npm install
+npx playwright install
+npx playwright test
+```
+
+Playwright auto‑starts the dev server on port 8080 and runs tests headlessly. Use `PWDEBUG=1 npx playwright test` for headed debugging.
+
+## Production Build
+
+```bash
+./gradlew :webApp:jsBrowserProductionWebpack
+```
+
+Artifacts are emitted under `webApp/build/distributions/` (static files suitable for hosting).

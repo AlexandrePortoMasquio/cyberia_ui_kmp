@@ -7,8 +7,8 @@ import kotlin.js.Promise
 import org.khronos.webgl.Uint8Array
 
 /**
- * Externs mínimos para @solana/web3.js. Estes mapeamentos permitem que
- * o Kotlin/JS invoque APIs JavaScript diretamente, mantendo tipagem básica.
+ * Minimal externs for @solana/web3.js. These mappings allow Kotlin/JS
+ * to call JavaScript APIs directly with basic typing.
  */
 external class Connection(endpoint: String, options: dynamic = definedExternally) {
     fun getBalance(pubkey: PublicKey): Promise<Number>

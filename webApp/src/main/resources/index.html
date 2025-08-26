@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,35 +15,43 @@
     </style>
   </head>
   <body>
-    <div class="card">
-      <h1>Cyberia Escrow (Kotlin Multiplatform)</h1>
-      <p>Interface web em Kotlin/JS para interagir com o contrato de escrow.</p>
-      <div class="row">
-        <button id="connectBtn">Conectar carteira</button>
-        <button id="balanceBtn" disabled>Consultar saldo</button>
-      </div>
-      <div class="status">
-        Endereço: <span id="addr">—</span>
-      </div>
-      <div class="status">
-        Saldo (lamports): <span id="balance">—</span>
-      </div>
-      <div class="section">
-        <h2>Ações de Escrow</h2>
-        <div class="row">
-          <label for="priceInput">Preço (lamports):</label>
-          <input id="priceInput" type="number" min="0" />
-          <label for="nonceInput">Nonce:</label>
-          <input id="nonceInput" type="number" min="0" />
-        </div>
-        <div class="row">
-          <button id="openEscrowBtn" disabled>Abrir escrow</button>
-          <button id="confirmBtn" disabled>Confirmar entrega</button>
-          <button id="refundBtn" disabled>Refund (timeout)</button>
-        </div>
-        <div class="status" id="actionStatus"></div>
-      </div>
-    </div>
+    <script>
+      // Dev-only wallet mock: enable via ?mockWallet=1 when Phantom isn't installed.
+      (function () {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const mock = params.get('mockWallet') === '1';
+          if (mock && !(window.solana && window.solana.isPhantom)) {
+            const fakePk = { toBase58: () => 'FAKE111111111111111111111111111111111111111' };
+            window.solana = {
+              isPhantom: true,
+              publicKey: fakePk,
+              connect: async () => ({ publicKey: fakePk }),
+              disconnect: async () => undefined,
+              signTransaction: async (tx) => tx,
+              signAndSendTransaction: async () => ({ signature: 'MOCK_SIGNATURE' })
+            };
+            console.info('[mock-wallet] Phantom mock enabled');
+          }
+        } catch (e) { console.warn('[mock-wallet] failed to init', e); }
+      })();
+    </script>
+    <header class="card" style="margin-bottom: 1rem;">
+      <h1>Cyberia (XCYB)</h1>
+      <nav class="row">
+        <a href="#/home">Home</a>
+        <a href="#/whitepaper">Whitepaper</a>
+        <a href="#/philosophy">Philosophy</a>
+        <a href="#/token">Token (XCYB)</a>
+        <a href="#/chat">Chat</a>
+        <a href="#/roadmap">Roadmap</a>
+        <a href="#/legal">Legal</a>
+      </nav>
+    </header>
+
+    <main id="app" class="card">
+      <!-- Content rendered by Kotlin router -->
+    </main>
     <script src="/webApp.js"></script>
   </body>
 </html>

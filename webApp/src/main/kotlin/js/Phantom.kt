@@ -5,8 +5,8 @@ import solana.PublicKey
 import solana.Transaction
 
 /**
- * Interfaces para interação com a extensão Phantom (wallet). O objeto
- * window.solana expõe estes membros quando a Phantom está instalada.
+ * Interfaces for interacting with the Phantom wallet extension.
+ * The window.solana object exposes these members when Phantom is installed.
  */
 external interface PhantomConnectResult {
     val publicKey: PublicKey
@@ -21,5 +21,5 @@ external interface PhantomProvider {
     fun signAndSendTransaction(tx: Transaction): Promise<dynamic>
 }
 
-// Objeto global window (para acessar window.solana)
+// Global window object (to access window.solana)
 external val window: dynamic
